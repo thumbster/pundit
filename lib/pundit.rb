@@ -173,14 +173,15 @@ protected
   # @param record [Object] the object we're checking permissions of
   # @param query [Symbol, String] the predicate method to check on the policy (e.g. `:show?`).
   #   If omitted then this defaults to the Rails controller action name.
+  # @param policy_class [Class] the policy class we wan't to force use of
   # @raise [NotAuthorizedError] if the given query method returned false
   # @return [Object] Always returns the passed object record
-  def authorize(record, query = nil)
+  def authorize(record, query = nil, policy_class: nil)
     query ||= params[:action].to_s + "?"
 
     @_pundit_policy_authorized = true
 
-    policy = policy(record)
+    policy = policy_class ? policy_class.new(pundit_user, record) : policy(record)
 
     unless policy.public_send(query)
       raise NotAuthorizedError, query: query, record: record, policy: policy
