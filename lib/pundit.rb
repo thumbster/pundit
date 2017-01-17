@@ -60,7 +60,7 @@ module Pundit
     # @param query [Symbol, String] the predicate method to check on the policy (e.g. `:show?`)
     # @raise [NotAuthorizedError] if the given query method returned false
     # @return [Object] Always returns the passed object record
-    def authorize(user, record, query)
+    def authorize(user, record, query, policy_class = nil)
       
       policy = policy_class ? policy_class.new(user, record) : policy!(user, record)
 
