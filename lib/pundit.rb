@@ -56,11 +56,13 @@ module Pundit
     #
     # @param user [Object] the user that initiated the action
     # @param record [Object] the object we're checking permissions of
+    # @param policy_class [Class] the policy class we wan't to force use of
     # @param query [Symbol, String] the predicate method to check on the policy (e.g. `:show?`)
     # @raise [NotAuthorizedError] if the given query method returned false
     # @return [Object] Always returns the passed object record
     def authorize(user, record, query)
-      policy = policy!(user, record)
+      
+      policy = policy_class ? policy_class.new(user, record) : policy!(user, record)
 
       unless policy.public_send(query)
         raise NotAuthorizedError, query: query, record: record, policy: policy
